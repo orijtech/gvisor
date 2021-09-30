@@ -12,12 +12,12 @@ go_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
+        "//pkg/eventfd",
         "//pkg/log",
         "//pkg/sync",
         "//pkg/tcpip",
         "//pkg/tcpip/buffer",
         "//pkg/tcpip/header",
-        "//pkg/tcpip/link/rawfile",
         "//pkg/tcpip/link/sharedmem/queue",
         "//pkg/tcpip/stack",
         "@org_golang_x_sys//unix:go_default_library",
@@ -31,6 +31,7 @@ go_test(
     ],
     library = ":sharedmem",
     deps = [
+        "//pkg/eventfd",
         "//pkg/sync",
         "//pkg/tcpip",
         "//pkg/tcpip/buffer",
