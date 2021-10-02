@@ -144,6 +144,18 @@ func TestTCPListenBacklog(t *testing.T) {
 		}
 	}
 
+	// While the accept queue is still full, send an unexpected ACK from a new
+	// socket. The listener should reply with an RST.
+	{
+		conn := dut.Net.NewTCPIPv4(t, testbench.TCP{DstPort: &remotePort}, testbench.TCP{})
+		conn.Send(t, testbench.TCP{Flags: testbench.TCPFlags(header.TCPFlagAck)})
+		if got, err := conn.Expect(t, testbench.TCP{}, time.Second); err != nil {
+			t.Errorf("expected TCP frame: %s", err)
+		} else if got, want := *got.Flags, header.TCPFlagRst; got != want {
+			t.Errorf("got %s, want %s", got, want)
+		}
+	}
+
 	func() {
 		// Now initiate a new connection when the accept queue is full.
 		connectingConn := dut.Net.NewTCPIPv4(t, testbench.TCP{DstPort: &remotePort}, testbench.TCP{})
